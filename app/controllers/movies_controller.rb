@@ -3,6 +3,17 @@ class MoviesController < ApplicationController
 
   # GET /movies or /movies.json
   def index
+    # Explicit settings in params are saved to the session. With none given,
+    # redirect to the same RESTful URL carrying the remembered settings.
+    if params.key?(:ratings) || params.key?(:sort_by)
+      session[:ratings] = params[:ratings].present? ? params[:ratings].keys : nil
+      session[:sort_by] = params[:sort_by]
+    elsif session[:ratings].present? || session[:sort_by].present?
+      redirect_to movies_path(ratings: (session[:ratings] || []).index_with { "1" },
+                              sort_by: session[:sort_by])
+      return
+    end
+
     @all_ratings = Movie.all_ratings
     @ratings_to_show = params[:ratings].present? ? params[:ratings].keys : @all_ratings
     @sort_by = Movie::SORT_COLUMNS.include?(params[:sort_by]) ? params[:sort_by] : nil
