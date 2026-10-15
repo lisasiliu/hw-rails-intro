@@ -1,4 +1,6 @@
 class Movie < ApplicationRecord
+  SORT_COLUMNS = %w[title release_date].freeze
+
   def self.all_ratings
     %w[G PG PG-13 R]
   end
